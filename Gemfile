@@ -40,3 +40,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin]
 
 #iCalendar gem
 gem 'icalendar'
+
+#For creating and managing forms
+gem 'simple_form'
