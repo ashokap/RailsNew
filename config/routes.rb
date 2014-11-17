@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   get 'calendar/show'
+  get 'calendar/index'
+  get 'calendar/parse'
 
   resources :calendars
   

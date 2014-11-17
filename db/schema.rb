@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141111102702) do
+ActiveRecord::Schema.define(version: 20141117103455) do
 
   create_table "articles", force: true do |t|
     t.string   "title"
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 20141111102702) do
 
   create_table "calendars", force: true do |t|
     t.date     "starttime"
-    t.date     "endtime"
+    t.text     "timezone"
     t.text     "summary"
     t.datetime "created_at"
     t.datetime "updated_at"
