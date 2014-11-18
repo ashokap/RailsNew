@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
-  get 'calendar/show'
+  #get 'calendar/show'
   get 'calendar/index'
-  post 'calendar/parse'
+  post 'calendar/import'
   post 'calendar/export'
 
   resources :calendars
