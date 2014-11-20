@@ -6,7 +6,7 @@ class CalendarController < ApplicationController
 
   def import
     @uploaded_io = params[:file]
-    puts("File type:::: #{@uploaded_io.content_type}")
+    
     if params[:file].blank?
       redirect_to '/calendar/index', :notice => "Please select a file to import."
     elsif @uploaded_io.content_type == "text/calendar"

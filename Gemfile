@@ -43,3 +43,11 @@ gem 'icalendar'
 
 #For creating and managing forms
 gem 'simple_form'
+
+#Gem needed for User authentication
+gem 'devise'
+
+#needed for exporting calendar events to google calendar
+gem 'google-api-client', :require => 'google/api_client'
+gem 'omniauth'
+gem 'omniauth-google-oauth2'

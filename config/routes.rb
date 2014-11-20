@@ -1,4 +1,17 @@
 Rails.application.routes.draw do
+  devise_for :users, :controllers => { :omniauth_callbacks => "omniauth_callbacks" }
+  
+  
+  devise_scope :user do
+  authenticated :user do
+    root 'welcome#index', as: :authenticated_root
+  end
+
+  unauthenticated do
+    root 'devise/sessions#new', as: :unauthenticated_root
+  end
+end
+
   #get 'calendar/show'
   get 'calendar/index'
   post 'calendar/import'
@@ -9,9 +22,9 @@ Rails.application.routes.draw do
   resources :articles do
     resources :comments
   end
-  get 'welcome/index'
+  #get 'welcome/index'
 
-  root 'welcome#index'
+  #root 'welcome#index'
   
   #match 'calenders' '/calender'
   #match 'calendar', to: 'calendar#show',
