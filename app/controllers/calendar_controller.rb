@@ -6,7 +6,7 @@ class CalendarController < ApplicationController
 
   def import
     @uploaded_io = params[:file]
-    
+
     if params[:file].blank?
       redirect_to '/calendar/index', :notice => "Please select a file to import."
     elsif @uploaded_io.content_type == "text/calendar"
@@ -15,7 +15,7 @@ class CalendarController < ApplicationController
         file.write(@uploaded_io.read)
       end
       redirect_to '/calendar/index', :notice => "Import successful."
-      self.parse
+    self.parse
     else
       redirect_to '/calendar/index', :notice => "Please select .ics file."
     end
@@ -32,7 +32,7 @@ class CalendarController < ApplicationController
     # Now you can access the cal object in just the same way I created it
     # puts("Current Calendar: #{cal}")
       cal.events.each do |event|
-        # puts "Current event : #{event}"
+      # puts "Current event : #{event}"
         @calendar = Calendar.new(params[:calendar])
         @calendar.assign_attributes(:summary => " #{event.summary}", :starttime => "#{event.dtstart}" , :timezone => "#{event.dtstart.ical_params['tzid']}")
         @calendar.save
@@ -59,6 +59,60 @@ class CalendarController < ApplicationController
     file.close
     send_file("tmp/sample.ics")
 
+  end
+
+  #Inserts an event into Google calendar
+  def insert
+    event = {
+      'summary' => 'Sample Event',
+      'description' => 'Directly inserting into Google calendar',
+      'location' => 'PaNa',
+      'start' => {'dateTime' => '2014-11-03T10:00:00.000-07:00'},
+      'end' => {'dateTime' => '2014-11-03T10:25:00.000-07:00'},
+      'attendees' => [ { "email" => 'ashoka.p@gmail.com' } ] }
+
+    client = Google::APIClient.new
+    client.authorization.access_token =  current_user.token
+    service = client.discovered_api('calendar', 'v3')
+
+    result = client.execute(:api_method => service.events.insert,
+    :parameters => {'calendarId' => current_user.email, 'sendNotifications' => true},
+    :body => JSON.dump(event),
+    :headers => {'Content-Type' => 'application/json'})
+    print result.data.id
+    @calendar = Calendar.new(params[:calendar])
+    @calendar.assign_attributes(:summary => 'Sample Event', :starttime => '2014-11-03T10:00:00.000-07:00' , :timezone => 'IST')
+    #@calendar.summary=event.summary
+    #@calendar.starttime=event.start
+    @calendar.save
+    redirect_to '/calendar/index', :notice => "Successfully inserted event to Google calendar"
+  end
+
+  #Imports events from google calendar
+  def importevent
+    page_token = nil
+    client = Google::APIClient.new
+    client.authorization.access_token =  current_user.token
+    service = client.discovered_api('calendar', 'v3')
+    
+    result = client.execute(:api_method => service.events.list,
+    :parameters => {'calendarId' => 'ashoka.p@gmail.com'})
+    while true
+      events = result.data.items
+      events.each do |event|
+        print " start time : #{event.created}" 
+        @calendar = Calendar.new(params[:calendar])
+        @calendar.assign_attributes(:summary => " #{event.summary}", :starttime => "#{event.created}")# , :timezone => "#{event.timeZone}")
+        @calendar.save
+      end
+      if !(page_token = result.data.next_page_token)
+      break
+      end
+      result = client.execute(:api_method => service.events.list,
+      :parameters => {'calendarId' => 'ashoka.p@gmail.com',
+        'pageToken' => page_token})
+    end
+    redirect_to '/calendar/index', :notice => "Successfully Imported events from Google calendar"
   end
 
   private

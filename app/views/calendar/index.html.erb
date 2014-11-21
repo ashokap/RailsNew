@@ -26,3 +26,7 @@
 
 <%= link_to 'Back to Main page', '/' %>
 
+<% if current_user.token %>
+	<%= button_to 'Insert into Google Calendar', 'insert', method: :post %>
+	<%= button_to 'Import Google Calendar', 'importevent', method: :post %>
+<%end%>

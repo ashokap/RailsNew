@@ -16,6 +16,8 @@ end
   get 'calendar/index'
   post 'calendar/import'
   post 'calendar/export'
+  post 'calendar/insert'
+  post 'calendar/importevent'
 
   resources :calendars
   
